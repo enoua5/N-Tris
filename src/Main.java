@@ -7,15 +7,18 @@ public class Main
     public static void main(String[] args)
     throws InterruptedException
     {
-        while(!menu.c.started)
-        {
-            Thread.sleep(1000/FRAMERATE);
-            menu.c.repaint();
-        }
         while(true)
         {
-            Thread.sleep(1000/FRAMERATE);
-            game.c.gameLoop();
+            while(!menu.c.started)
+            {
+                Thread.sleep(1000/FRAMERATE);
+                menu.c.repaint();
+            }
+            while(!game.c.restart)
+            {
+                Thread.sleep(1000/FRAMERATE);
+                game.c.gameLoop();
+            }
         }
     }
 }

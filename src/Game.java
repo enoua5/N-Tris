@@ -21,6 +21,8 @@ public class Game extends JPanel implements MouseListener, MouseMotionListener
     public int linesToLevel;
     public Mino next;
     public Mino falling;
+    public boolean restart;
+    public Button retry;
     public Game(int w, int h)
     {
         width=w;
@@ -42,6 +44,7 @@ public class Game extends JPanel implements MouseListener, MouseMotionListener
         linesToLevel=2;
         next=new Mino();
         falling=new Mino();
+        restart=false;
     }
     private void initGraphics(Graphics g)
     {
@@ -83,6 +86,19 @@ public class Game extends JPanel implements MouseListener, MouseMotionListener
         falling.draw(g);
         drawGrid(g);
         next.draw(g, true);
+        drawGameOver(g);
+    }
+    public void drawGameOver(Graphics g)
+    {
+        if(!playing)
+        {
+            int boardWidth=height/2;
+            int boardOffset=width-boardWidth;
+            g.setFont(new Font("Serif", Font.BOLD, 36));
+            g.setColor(new Color(255,255,255));
+            g.drawString("Game Over", boardOffset+((boardWidth-(9*27))/2)+10, height/2);
+            retry.draw(g);
+        }
     }
     public void drawGrid(Graphics g)
     {
@@ -238,7 +254,11 @@ public class Game extends JPanel implements MouseListener, MouseMotionListener
                                 overTop=true;
                         if(overTop)
                         {
+                            int boardWidth=height/2;
+                            int boardOffset=width-boardWidth;
                             playing=false;
+                            retry=new Button(boardOffset+(boardWidth-100)/2, (int)(height/1.9),
+                                100, 50, "Quit", new int[]{255, 0, 0});
                         }
                         if(gracePeriod==0)
                             gracePeriod=52;
@@ -270,10 +290,28 @@ public class Game extends JPanel implements MouseListener, MouseMotionListener
     @Override
     public void mouseExited(MouseEvent e){}
     @Override
-    public void mouseClicked(MouseEvent e){}
+    public void mouseClicked(MouseEvent e)
+    {
+        int x=e.getX();
+        int y=e.getY();
+        if(!playing)
+        if(retry.overlap(x,y))
+        {
+            restart=true;
+            Main.menu.c.started=false;
+            Main.game.setVisible(false);
+            Main.menu.setVisible(true);
+        }
+    }
     
     @Override
-    public void mouseMoved(MouseEvent e){}
+    public void mouseMoved(MouseEvent e)
+    {
+        int x=e.getX();
+        int y=e.getY();
+        if(!playing)
+        retry.overlap(x,y);
+    }
     @Override
     public void mouseDragged(MouseEvent e){}
 }
